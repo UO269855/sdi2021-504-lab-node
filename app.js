@@ -1,15 +1,20 @@
 let express = require('express');
 let app = express();
 
+
 let swig = require('swig');
 let bodyParser = require('body-parser');
 let mongo = require('mongodb');
+let fileUpload = require('express-fileupload');
+let gestorBD = require("./modules/gestorBD.js");
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(fileUpload());
 
-let gestorBD = require("./modules/gestorBD.js");
+
 gestorBD.init(app,mongo);
 
 app.set('port', 8081);
