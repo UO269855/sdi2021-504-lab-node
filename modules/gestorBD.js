@@ -4,7 +4,41 @@ module.exports = {
     init : function(app, mongo) {
         this.mongo = mongo;
         this.app = app;
-    },modificarCancion : function(criterio, cancion, funcionCallback) {
+    },anadirComentario : function(comentario, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('comentarios');
+                collection.insertOne(comentario, function(err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    obtenerComentarios : function(criterio, funcionCallback){
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('comentarios');
+                collection.find(criterio).toArray(function(err, comentarios) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(comentarios);
+                    }
+                    db.close();
+                });
+            }
+        });
+    }
+    ,modificarCancion : function(criterio, cancion, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
                 funcionCallback(null);
