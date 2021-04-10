@@ -23,7 +23,7 @@
 	 <div class="row" style="margin-top: 20px;" >
 		 <div class="wrap">Autor: {{ comentario.autor }}</div>
 		 <div class="small">{{ comentario.texto }} </div>
-	  </div>
+	 </div>
 	{% endfor %}
 
 	<form class="form-horizontal" method="post" action="/comentarios/{{ cancion._id.toString() }}" encType="multipart/form-data">
