@@ -192,15 +192,30 @@ module.exports = function(app, swig, gestorBD) {
     });
 
     app.get("/tienda", function(req, res) {
-        let criterio = {};
+        let criterio = { "usuario" : req.session.usuario };
+        let cancionesCompradasIds = [];
+
+        gestorBD.obtenerCompras(criterio, function(compras) {
+            if (compras == null){
+                res.send("Error al listar");
+            } else {
+
+                for (i=0; i< compras.length; i++) {
+                    cancionesCompradasIds.push(compras[i].cancionId);
+                }
+            }
+        })
+
+
+        let criterio2 = {$and: [{"autor": {$ne: req.session.usuario}},{"_id": {$nin: cancionesCompradasIds}}]};
         if( req.query.busqueda != null ){
-            criterio = { "nombre" : req.query.busqueda };
+            criterio2 = { "nombre" : req.query.busqueda };
         }
         let pg = parseInt(req.query.pg); // Es String !!!
         if ( req.query.pg == null){ // Puede no venir el param
             pg = 1;
         }
-        gestorBD.obtenerCancionesPg(criterio, pg , function(canciones, total ) {
+        gestorBD.obtenerCancionesPg(criterio2, pg , function(canciones, total ) {
             if (canciones == null) {
                 res.send("Error al listar ");
             } else {
